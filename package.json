@@ -1,0 +1,21 @@
+{
+  "name": "negapoji",
+  "version": "0.0.1",
+  "description": "negapoji is sentiment classification of node.js in Japanese.",
+  "main": "command.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sentiment classification",
+    "negapoji",
+    "negative",
+    "pojitive",
+    "nodejs"
+  ],
+  "author": "Yuichi Tanaka <tanaka.y.p@gmail.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "kuromoji": "^0.1.1"
+  }
+}
