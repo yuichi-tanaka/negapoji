@@ -14,6 +14,7 @@ command
 ```bash
 node command.js <Japanese sentence>
 ```
+node.js program
 
 ```nodejs
 //import lib

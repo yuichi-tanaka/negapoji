@@ -1,6 +1,7 @@
 /**
  * negapoji
- *
+ * - build
+ *   (error, calculator) => {}
  */
 const kuromoji = require('kuromoji'),
   path = require('path'),
@@ -10,6 +11,8 @@ const negapoji = () => {};
 
 /**
  * kuromoji build
+ * - opts.filter
+ * - opts.kuromoji_dic
  */
 const kuromoji_build = (opts) => {
   var opts = opts || {};
@@ -18,7 +21,6 @@ const kuromoji_build = (opts) => {
   dic_dir = path.normalize(__dirname + dic_path),
   _filter = typeof opts.filter !== 'undefined' ? (val) => (val.pos === '名詞' || val.pos === '動詞' || val.pos === '形容詞' || val.pos === '副詞') : opts.filter,
   _kuromoji_dic = typeof opts.kuromoji_dic === 'undefined' ? dic_dir : opts.kuromoji_dic;
-
 
   return new Promise((res,rej) => {
     kuromoji.builder({dicPath: _kuromoji_dic}).build((err, tokenizer) => {
@@ -30,8 +32,15 @@ const kuromoji_build = (opts) => {
   });
 };
 
+/**
+ * sentiment_build
+ * - opts.
+ */
 const sentiment_build = (opts) => {
 
+  /**
+   * default_parser_noun
+   */
   const default_parser_noun = (rows, dict) => {
     var dict = dict || {};
     rows.map((row) => {
@@ -42,6 +51,9 @@ const sentiment_build = (opts) => {
     return dict;
   };
 
+  /**
+   * default_parser_term
+   */
   const default_parser_term = (rows, dict) => {
     var dict = dict || {};
     rows.map((row) => {
@@ -54,12 +66,18 @@ const sentiment_build = (opts) => {
     return dict;
   };
 
+  /**
+   * default dictionalies
+   */
   const _default = '/../dict/',
     dic_files = [
       {file: 'pn.csv.m3.120408.trim', parser: default_parser_noun},
       {file: 'wago.121808.pn', parser: default_parser_term}
     ];
 
+  /**
+   * file reader
+   */
   const read = (files, dict, cb) => {
     if(files.length <= 0) {
       return cb(dict);
@@ -81,11 +99,11 @@ const sentiment_build = (opts) => {
       res(dict);
     });
   });
-
-
-
 };
 
+/**
+ * add_sentiment_param
+ */
 const add_sentiment_param = (dict,words) => {
       words.filter((word) => dict[word.basic_form || word.surface_form]).map((word) => {
         word.sc = dict[word.basic_form || word.surface_form];
@@ -93,17 +111,21 @@ const add_sentiment_param = (dict,words) => {
       return words;
 };
 
+/**
+ * calculate
+ */
 const calculate = (words) => {
       var filter_val = words.filter((word) => word.sc);
       var total_score = filter_val.map((word) => {
         return word.sc[1];
       }).reduce((x, y) => x + y);
 
-//     console.log('num : ' , filter_val.length);
-//     console.log('total_score : ' , total_score);
       return total_score/filter_val.length;
 };
 
+/**
+ * build
+ */
 negapoji.build = (opts,cb) => {
   Promise.all([kuromoji_build(), sentiment_build()]).then((result) => {
     const tokenizer = result[0];
